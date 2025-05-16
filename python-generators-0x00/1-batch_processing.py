@@ -1,14 +1,10 @@
-import mysql.connector
 from mysql.connector import Error
+from seed import connect_to_prodev
 
 def stream_users_in_batches(batch_size):
-    connection = mysql.connector.connect(
-            host = "localhost",
-            user = "root",
-            password = "c@Zajoel5864",
-            database = "ALX_prodev"
-        )
     try:
+        connection = connect_to_prodev()
+
         if connection.is_connected():
             with connection.cursor(dictionary=True) as cursor:
                 cursor.execute("SELECT * FROM user_data")

@@ -1,15 +1,11 @@
-import mysql.connector
+from seed import connect_to_prodev
 from mysql.connector import Error
 
 def stream_users():
-    connection = mysql.connector.connect(
-            host = "localhost",
-            user = "root",
-            password = "c@Zajoel5864",
-            database = "ALX_prodev"
-        )
+    connection = None
 
     try:
+        connection = connect_to_prodev()
         if connection.is_connected():
             with connection.cursor(dictionary=True) as cursor:
                 cursor.execute("SELECT * FROM user_data")
@@ -21,5 +17,5 @@ def stream_users():
     except Error as err:
         print(f"Error: {err}")
     finally:
-        if connection.is_connected():
+        if connection and connection.is_connected():
             connection.close()
