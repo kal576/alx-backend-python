@@ -2,6 +2,7 @@ import sqlite3
 import functools
 import time
 import logging
+from datetime import datetime
 
 #### decorator to lof SQL queries
 
@@ -18,13 +19,13 @@ def log_queries(func):
             query = kwargs.get('query', 'Unknown query')
 
         logging.info(f"Executing {query}")
-        start_time = time.time()
+        start_time = datetime.time()
         
         try:
             #Log the query
             #assign a variable name to the function to call later
             result = func(*args, **kwargs)
-            time_elapsed = time.time() - start_time
+            time_elapsed = (datetime.time() - start_time).total_seconds()
             logging.info(f"Query {query} Executed Successfully")
             logging.info(f"Time Taken: {time_elapsed:.4f} seconds")
             return result
@@ -49,4 +50,7 @@ def fetch_all_users(query):
     return results
 
 #### fetch users while logging the query
-users = fetch_all_users(query="SELECT * FROM users")
+try:
+    users = fetch_all_users("SELECT * FROM users")
+except Exception as e:
+    print("Caught error:", e)
