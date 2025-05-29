@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-
-from utils import access_nested_map, get_json, memoize
-import unittest
-from unittest.mock import patch
-from parameterized import parameterized
-
-
 """
 Unit tests for utility functions used across the project.
 
@@ -18,6 +11,13 @@ Each function is tested using the unittest framework, with parameterized
 tests where applicable. Mocking is used to simulate external behavior,
 especially for HTTP requests.
 """
+from utils import access_nested_map, get_json, memoize
+import unittest
+from unittest.mock import patch
+from parameterized import parameterized
+
+
+
 
 
 class TestAccessNestedMap(unittest.TestCase):
