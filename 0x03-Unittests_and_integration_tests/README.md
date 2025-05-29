@@ -1,0 +1,1 @@
+This directory contains some practice work o unit and integration testing. All test files have the prename test, followed by the file they are testing. Inside each test file is well documented code oeach test case
