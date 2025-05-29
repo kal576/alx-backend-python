@@ -6,24 +6,42 @@ from unittest.mock import patch
 from parameterized import parameterized
 
 
-""" Unit tests for functions in utils.py """
+"""Unit tests for functions in utils.py"""
 
 
 class TestAccessNestedMap(unittest.TestCase):
     """Test cases for the access_nested_map function"""
 
     @parameterized.expand([
-        ({"a": 1}, ("a", ), 1),
-        ({"a": {"b": 2}}, ("a", ), {"b": 2}),
-        ({"a": {"b": 2}}, ("a", "b"), 2),
+        (
+            {"a": 1},
+            ("a", ),
+            1,
+        ),
+        (
+            {"a": {"b": 2}},
+            ("a", ),
+            {"b": 2},
+        ),
+        (
+            {"a": {"b": 2}},
+            ("a", "b"),
+            2,
+        )
     ])
     def test_access_nested_map(self, nested_map, path, expected):
         """Testing that access_nested_map returns correct value for given path"""
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
     @parameterized.expand([
-        ({}, ("a", )),
-        ({"a": 1}, ("a", "b")),
+        (
+            {},
+            ("a", ),
+        ),
+        (
+            {"a": 1},
+            ("a", "b"),
+        )
     ])
     def test_access_nested_map_exception(self, nested_map, path):
         """Ensure that KeyError is raised for invalid paths"""
@@ -37,8 +55,14 @@ class TestGetJson(unittest.TestCase):
     """Mock tests for HTTP GET requests using get_json function"""
 
     @parameterized.expand([
-        ("http://example.com", {"payload": True}),
-        ("http://holberton.io", {"payload": False}),
+        (
+            "http://example.com",
+            {"payload": True},
+        ),
+        (
+            "http://holberton.io",
+            {"payload": False},
+        )
     ])
     @patch("requests.get")
     def test_get_json(self, test_url, test_payload, mock_get):
@@ -54,7 +78,8 @@ class TestMemoize(unittest.TestCase):
     def test_memoize(self):
         """
         Test that the @memoize decorator caches the result of a method.
-        Ensures that the method is only called once, even when accessed multiple times.
+        Ensures that the method is only called once, even when accessed
+        multiple times.
         """
 
         class TestClass:
