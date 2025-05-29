@@ -6,7 +6,8 @@ This module contains unit tests for utility functions:
 - memoize
 
 The tests use parameterization and mocking to simulate various cases,
-ensuring the correctness of function outputs and behavior under various conditions.
+ensuring the correctness of function outputs and behavior under various
+conditions.
 """
 
 import unittest
