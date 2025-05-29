@@ -9,6 +9,7 @@ from parameterized import parameterized
 
 """ Unit test for the function access_nested_map """
 
+
 class TestAccessNestedMap(unittest.TestCase):
 	
 	""" Test cases for the access_nested_map fuction """
@@ -65,6 +66,8 @@ class TestMemoize(unittest.TestCase):
 				return self.a_method()
 
 		with patch.object(TestClass, 'a_method', return_value=42) as mock_method:
+
+			"""Tests each instance ie whether it can be accessed from cache ad stored in cache"""
 			test_instance = TestClass()
 
 			#first call to a_property should call a_method
@@ -80,3 +83,4 @@ class TestMemoize(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+"""Runs if called from the main file"""
