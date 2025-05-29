@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 from utils import access_nested_map
+from utils import get_json
+from utils import memoize
 import unittest
+from unittest.mock import patch
 from parameterized import parameterized
 
 """ Unit test for the function access_nested_map """
@@ -23,7 +26,7 @@ class TestAccessNestedMap(unittest.TestCase):
 		self.assertEqual(access_nested_map(nested_map, path), expected)
 
 	@parameterized.expand([
-		({}, ("a",),),
+		({}, ("a",)),
 		({"a": 1}, ("a", "b")),
 	])
 	def test_access_nested_map_exception(self, nested_map, path):
@@ -32,17 +35,17 @@ class TestAccessNestedMap(unittest.TestCase):
 			access_nested_map(nested_map, path)
 
 		self.assertEqual(str(context.exception), f"'{path[-1]}'")
-
+ 
 class TestGetJson(unittest.TestCase):
 	""" Mock tests for http calls """
 
-	@parameterized.expad([
+	@parameterized.expand([
 		("http://example.com", {"payload": True}),
         ("http://holberton.io", {"payload": False}),
 		])
 
-	@patch('payload.requess.get')
-	def test_get_json(self, test_url, tes_payload, mock_get):
+	@patch('requests.get')
+	def test_get_json(self, test_url, test_payload, mock_get):
 		""" Tests that the correct json is returned """
 
 		mock_get.return_value.json.return_value = test_payload
@@ -64,15 +67,16 @@ class TestMemoize(unittest.TestCase):
 		with patch.object(TestClass, 'a_method', return_value=42) as mock_method:
 			test_instance = TestClass()
 
-			# First call to a_property should call a_method
-            result1 = test_instance.a_property()
+			#first call to a_property should call a_method
+			result1 = test_instance.a_property
 
-            # Second call to a_property should use
-            result2 = test_instance.a_property()
+			#second call should use a cached value
+			result2 = test_instance.a_property
 
-            self.assertEqual(result1, 42)
-            self.assertEqual(result2, 42)
-            mock_method.assert_called_once()
+			#testing whether the outputs match
+			self.assertEqual(result1, 42)
+			self.assertEqual(result2, 42)
+			mock_method.assert_called_once
 
 if __name__ == "__main__":
     unittest.main()
