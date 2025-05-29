@@ -6,7 +6,18 @@ from unittest.mock import patch
 from parameterized import parameterized
 
 
-"""Unit tests for functions in utils.py"""
+"""
+Unit tests for utility functions used across the project.
+
+This module contains unit tests for the following functions:
+- access_nested_map
+- get_json
+- memoize
+
+Each function is tested using the unittest framework, with parameterized
+tests where applicable. Mocking is used to simulate external behavior,
+especially for HTTP requests.
+"""
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -58,7 +69,12 @@ class TestAccessNestedMap(unittest.TestCase):
 
 
 class TestGetJson(unittest.TestCase):
-    """Mock tests for HTTP GET requests using get_json function"""
+    """
+    Mock tests for HTTP GET requests using get_json function.
+    
+    Ensures that the get_json function correctly handles mocked responses
+    and returns expected payloads.
+    """
 
     @parameterized.expand([
         (
@@ -82,11 +98,17 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """Tests the behavior of the @memoize decorator"""
+    """
+    Tests the behavior of the @memoize decorator.
+
+    Ensures that a method decorated with @memoize is only called once,
+    even when accessed multiple times on the same instance.
+    """
 
     def test_memoize(self):
         """
         Test that the @memoize decorator caches the result of a method.
+
         Ensures that the method is only called once, even when accessed
         multiple times.
         """
