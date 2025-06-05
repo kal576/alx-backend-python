@@ -1,7 +1,5 @@
 from rest_framework import viewsets, permissions, status, filters
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
+from .permissions import IsConversationParticipant
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 
@@ -13,7 +11,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     search_fields = ['participants_username']
 
     def get_queryset(self):
-        return Conversation.objects.filter(participants=self.request.user)
+        return Conversation.objects.filter(IsConversationParticipant)
     
     def perform_create(self, serializer):
         conversation = serializer.save()
@@ -27,7 +25,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     order_fields = ['created_at', 'sent_at']
 
     def get_queryset(self):
-        return Message.objects.filter(convo_participants=self.request.user)
+        return Message.objects.filter(IsConversationParticipant)
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
