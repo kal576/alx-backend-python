@@ -7,7 +7,7 @@ from .serializers import ConversationSerializer, MessageSerializer
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class  = ConversationSerializer
-    permission_classes = [permissions.IsAuthenitacted]
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants_username']
 
@@ -18,7 +18,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class  = MessageSerializer
-    permission_classes = [permissions.IsAuthenitacted]
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     order_fields = ['created_at', 'sent_at']
 

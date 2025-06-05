@@ -66,11 +66,13 @@ class Message(models.Model):
     message_body = models.TextField()
     conversation = models.ForeignKey(
         Conversation,
-        related_name='messages'
+        related_name='messages',
+        on_delete = models.CASCADE
     )
     sender = models.ForeignKey(
         User,
-        related_name='sent_message'
+        related_name='sent_message',
+        on_delete = models.CASCADE
     )
     content = models.TextField()
     sent_at = models.DateTimeField(
