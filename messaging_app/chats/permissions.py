@@ -1,6 +1,5 @@
 from rest_framework import permissions
 
-
 class IsParticipantOfConversation(permissions.BasePermission):
     """
     allow only authenticated users
