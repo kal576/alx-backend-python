@@ -1,37 +1,51 @@
 from rest_framework import serializers
 from .models import User, Conversation, Message
 
-"""
-Serializers are used to convert python objects into data types that can be rendered into JSON, XML
-or other content types an vice versa
-"""
-
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length = 50)
-    full_name = serializers.SerializerMethodField()
+    display_name = serializers.CharField(source='get_full_name', read_only=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['user_id', 'username', 'email', 'first_name', 'last_name', 'phone_number', 'bio', 'created_at']
+        fields = [
+            'user_id', 'username', 'email', 'first_name', 'last_name',
+            'phone_number', 'bio', 'display_name', 'password'
+        ]
 
-    def get_full_name(self, obj):
-        return f"{obj.first_name} {obj.last_name}"
-    
-    def validate_username(self, value):
-        if "admin" in value.lower():
-            raise serializers.ValidationError("User cannot contain 'admin")
-        return value
+    def create(self, validated_data):
+        """
+        Create a new user instance with the provided validated data.
+        The password is set using the set_password method to ensure hashing.
+        """
+        user = User(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
+    short_message = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
-        fields = ['message_id', 'conversation', 'sender', 'message_body', 'sent_at', 'created_at']
+        fields = [
+            'message_id', 'conversation', 'sender', 'message_body',
+            'sent_at', 'short_message'
+        ]
+
+    def get_short_message(self, obj):
+        # Return the first 20 characters of the message body
+        return obj.message_body[:20]
+
+    def validate_message_body(self, value):
+   #raise errors if the message body is empty
+        if not value.strip():
+            raise serializers.ValidationError("Message body cannot be empty.")
+        return value
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
-    messages = MessageSerializer(many=True, read_only=True, source='messages')
+    messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Conversation
