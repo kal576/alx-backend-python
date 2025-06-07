@@ -1,11 +1,15 @@
-import django_filters
 from .models import Message
+import django_filters
+
 
 class MessageFilter(django_filters.FilterSet):
-    start_time = django_filters.IsoDateTimeFilter(field_name="sent_at", lookup_expr='gte')
-    end_time = django_filters.IsoDateTimeFilter(field_name="sent_at", lookup_expr='lte')
-    sender = django_filters.CharFilter(field_name="sender__email", lookup_expr='icontains')
+    """
+    Filter for messages based on conversation ID and sender ID.
+    """
+    conversation_id = django_filters.NumberFilter(field_name='conversation__id', lookup_expr='exact')
+    sender_id = django_filters.NumberFilter(field_name='sender__id', lookup_expr='exact')
+    sent_at = django_filters.DateTimeFromToRangeFilter(field_name='sent_at', look_up_expr='range')
 
     class Meta:
         model = Message
-        fields = ['sender', 'start_time', 'end_time']
+        fields = ['conversation_id', 'sender_id', 'sent_at']
