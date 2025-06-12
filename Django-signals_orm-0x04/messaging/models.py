@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+from .manager import UnreadMessagesManager
 
 class Message(models.Model):
     message_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
@@ -12,6 +13,8 @@ class Message(models.Model):
     edited = models.BooleanField(default=False)
     edited_at = models.DateTimeField(auto_now_add=True)
     unread = models.BooleanField(default=True)
+    objects = models.Manager()  # default
+    is_read = UnreadMessagesManager()
 
     def __str__(self):
         if self.parent_message:
