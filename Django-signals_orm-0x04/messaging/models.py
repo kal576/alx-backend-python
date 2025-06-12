@@ -45,6 +45,7 @@ class MessageHistory(models.Model):
     message_id = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='edit_history')
     old_content = models.TextField()
     edited_at = models.DateTimeField(auto_now_add=True)
+    edited_by =  models.ForeignKey(Message, on_delete=models.CASCADE, related_name='edited_by', null=True, blank=True)
 
     def __str__(self):
         return f"Old version of message {self.original_message.message_id} at {self.edited_at}"
