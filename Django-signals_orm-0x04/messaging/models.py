@@ -17,6 +17,8 @@ class Message(models.Model):
         related_name = 'message_receiver')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add = True)
+    edited_at = models.DateTimeField(auto_now_add=True)
+    edited_by = 
 
     def __str__(self):
         return f"Message from {self.sender.username} to {self.receiver.username} at {self.timestamp}"
