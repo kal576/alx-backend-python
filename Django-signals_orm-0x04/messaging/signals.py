@@ -1,4 +1,4 @@
-from .models import Message, Notification
+from .models import Message, Notification, MessageHistory
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
