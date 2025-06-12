@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
@@ -6,13 +6,35 @@ from django.views import View
 from .models import Message
 
 @login_required
-def delete_user(self, request, *args, **kwargs):
+def delete_user(request, *args, **kwargs):
         user = request.user
         logout(request)
         user.delete()
         return redirect('home')
 
-def conversaation_view(request):
+@login_required
+def send_message(request, receiver_id, parent_id=None):
+    if request.method == "POST":
+        content = request.POST.get("content")
+
+         # Get the receiver and parent message if replying
+        receiver = get_object_or_404(User, id=receiver_id)
+        parent_message = get_object_or_404(Message, id=parent_id) if parent_id else None
+        
+        message = Message.objects.create(
+            sender=request.user,
+            receiver=receiver,
+            content=content,
+            parent_message=parent_message
+        )
+
+        return redirect("inbox") 
+    return render(request, "chat/send_message.html", {
+        "receiver_id": receiver_id,
+        "parent_id": parent_id
+    }) 
+
+def conversation_view(request):
         #get the root message(not reply)
         root_message = Message.objects.filter(parent_message__isnull=True).select_related(
                 'sender', 'receiver'
@@ -20,14 +42,13 @@ def conversaation_view(request):
                 'replies__sender', 'replies__receiver', 'replies__replies' 
         )
 
-        return render(request, {'messages': root_message})
+        def build_thread(message):
+            return{
+                "message": message,
+                "replies": [build_thread(reply) for reply in message.replies.all()]
+            }
+        threads = [build_thread(msg) for msg in root_message]
 
-def message_thread(message):
-    """Recursively build a message thread"""
-    thread = {
-        "message": message,
-        "replies": []
-    }
-    for reply in message.replies.all():
-        thread +=get_thread(reply)
-    return thread
+        return render(request,{
+              "threads": threads
+        })
