@@ -3,29 +3,15 @@ from django.contrib.auth.models import User
 import uuid
 
 class Message(models.Model):
-    message_id = models.UUIDField(
-        primary_key = True,
-        default = uuid.uuid4,
-        editable = False)
-    sender = models.ForeignKey(
-        User,
-        on_delete = models.CASCADE,
-        related_name = 'message_sender')
-    receiver = models.ForeignKey(
-        User,
-        on_delete = models.CASCADE,
-        related_name = 'message_receiver')
-    parent_message = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name='replies'
-    )
+    message_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
+    sender = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'message_sender')
+    receiver = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'message_receiver')
+    parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add = True)
     edited = models.BooleanField(default=False)
     edited_at = models.DateTimeField(auto_now_add=True)
+    unread = models.BooleanField(default=True)
 
     def __str__(self):
         if self.parent_message:
