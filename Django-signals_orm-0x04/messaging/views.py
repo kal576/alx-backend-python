@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.views import View
 from .models import Message
+from django.views.decorators.cache import cache_page
 
 @login_required
 def delete_user(request, *args, **kwargs):
@@ -59,3 +60,9 @@ def unread_messages_view(request):
       return render(request, {
             "unread_message": unread
       })
+
+@cache_page(60)
+def cache_view(request):
+    messages = Message.objects.filter(receiver=request.user).select_related('sender', 'receiver').only('sender', 'content', 'timestamp')
+    
+    return render(request, {'message': messages})
