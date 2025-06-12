@@ -20,10 +20,10 @@ def logging_edits(sender, instance, *kwargs):
             original = Message.objects.get(pk=instance.pk)
             if original.content != instance.content:
                 MessageHistory.objects.create(
-                    message_id = original
+                    message_id = original,
                     old_content = original.content
                 )
                 instance.edited = True
         
         except Message.DoesNotExist:
-            passs
+            pass
