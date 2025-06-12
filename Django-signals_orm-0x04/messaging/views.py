@@ -5,8 +5,7 @@ from django.contrib.auth import logout
 from django.views import View
 
 @login_required
-class DeleteUserView(View):
-    def post(self, request, *args, **kwargs):
+def delete_user(self, request, *args, **kwargs):
         user = request.user
         logout(request)
         user.delete()
