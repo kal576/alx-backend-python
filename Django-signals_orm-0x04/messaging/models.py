@@ -15,13 +15,22 @@ class Message(models.Model):
         User,
         on_delete = models.CASCADE,
         related_name = 'message_receiver')
+    parent_message = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='replies'
+    )
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add = True)
-    edited = models.BooleanField(default=Falses)
+    edited = models.BooleanField(default=False)
     edited_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Message from {self.sender.username} to {self.receiver.username} at {self.timestamp}"
+        if self.parent_message:
+            return f"Reply from {self.sender.username}"
+        return f"Message from {self.sender.username} at {self.timestamp}"
     
 class Notification(models.Model):
     notification_id = models.UUIDField(
