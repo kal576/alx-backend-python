@@ -1,0 +1,48 @@
+# deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-messaging-app
+  labels:
+    app: django-messaging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-messaging
+  template:
+    metadata:
+      labels:
+        app: django-messaging
+    spec:
+      containers:
+      - name: django-messaging
+        image: caleb/django-messaging:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        envFrom:
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: django-configmap
+        - secretRef:
+            name: django-secrets
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-messaging-service
+spec:
+  type: ClusterIP
+  selector:
+    app: django-messaging
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
