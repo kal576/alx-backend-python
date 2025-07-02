@@ -1,4 +1,4 @@
-name: Django CI with MySQL
+name: Django CI with Linting & Coverage
 
 on:
   push:
@@ -40,6 +40,10 @@ jobs:
           pip install --upgrade pip
           pip install -r messaging_app/requirements.txt
 
+      - name: Install flake8 and pytest-cov
+        run: |
+          pip install flake8 pytest-cov
+
       - name: Configure Django settings for testing
         run: |
           echo "DATABASES = {
@@ -53,9 +57,21 @@ jobs:
               }
           }" > messaging_app/messaging_app/test_settings.py
 
-      - name: Run migrations and tests
+      - name: Run migrations and tests with coverage
         run: |
           cd messaging_app
           python manage.py makemigrations --noinput
           python manage.py migrate --noinput
-          python manage.py test
+          python manage.py test --settings=messaging_app.test_settings --verbosity=2 \
+            --coverage --coverage-report=html --coverage-report=term
+
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: htmlcov/
+
+      - name: Run flake8 code linting
+        run: |
+          cd messaging_app
+          flake8 . --count --show-source --statistics
