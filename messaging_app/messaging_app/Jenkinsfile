@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main',
+                     url: 'https://github.com/kal576/alx-backend-python.git ',
+                     credentialsId: 'github-credentials'
+            }
+        }
+
+        stage('Set Up Python Environment') {
+            steps {
+                sh 'python3 -m venv venv'
+                sh 'source venv/bin/activate'
+                sh 'pip install --upgrade pip'
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests with Pytest') {
+            steps {
+                sh 'source venv/bin/activate && pytest tests/ --html=report.html'
+            }
+        }
+
+        stage('Publish Test Report') {
+            steps {
+                publishHTML(target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: '',
+                    reportFiles: 'report.html',
+                    reportName: 'Pytest Report'
+                ])
+            }
+        }
+    }
+
+    triggers {
+        manual()
+    }
+}
