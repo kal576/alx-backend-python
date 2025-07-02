@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_HUB_CRED = credentials('docker-hub-credentials')
+        IMAGE_NAME = "kal576/messaging-app"
+        IMAGE_TAG = "latest"
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
@@ -21,7 +27,7 @@ pipeline {
 
         stage('Run Tests with Pytest') {
             steps {
-                sh 'source venv/bin/activate && pytest tests/ --html=report.html'
+                sh 'cd messaging_app && python3 -m pytest tests/ --html=test_report.html'
             }
         }
 
@@ -31,10 +37,34 @@ pipeline {
                     allowMissing: false,
                     alwaysLinkToLastBuild: false,
                     keepAll: true,
-                    reportDir: '',
-                    reportFiles: 'report.html',
+                    reportDir: 'messaging_app',
+                    reportFiles: 'test_report.html',
                     reportName: 'Pytest Report'
                 ])
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} messaging_app/'
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com ', 'docker-hub-credentials')
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
+                }
             }
         }
     }
